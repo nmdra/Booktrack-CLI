@@ -1,2 +1,5 @@
 *.db
+*.sqlite
 bin/*
+# Added by goreleaser init:
+dist/
