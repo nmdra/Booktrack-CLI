@@ -4,9 +4,9 @@ Copyright © 2025 NIMENDRA <nimendraonline@gmail.com>
 package cmd
 
 import (
-	_ "embed"
-	"log/slog"
+	"fmt"
 	"os"
+	"strings"
 
 	"github.com/nmdra/Booktrack-CLI/internal/book"
 	"github.com/spf13/cobra"
@@ -29,7 +29,11 @@ var addCmd = &cobra.Command{
 			Year:   year,
 		})
 		if err != nil {
-			slog.Error("Failed to add book", "error", err)
+			if isNoSuchTableError(err) {
+				fmt.Fprintf(os.Stderr, "Database not initialized. Run `booktrack-cli init` to set it up.\n")
+			} else {
+				fmt.Fprintf(os.Stderr, "Failed to add book: %v\n", err)
+			}
 			os.Exit(1)
 		}
 	},
@@ -44,4 +48,8 @@ func init() {
 	addCmd.MarkFlagRequired("author")
 
 	rootCmd.AddCommand(addCmd)
+}
+
+func isNoSuchTableError(err error) bool {
+	return err != nil && strings.Contains(err.Error(), "no such table")
 }

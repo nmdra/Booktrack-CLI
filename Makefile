@@ -3,6 +3,9 @@
 generate:
 	sqlc generate
 
+schema:
+	cat db/migrations/*.up.sql > internal/db/schema.sql
+
 run:
 	go run main.go
 
